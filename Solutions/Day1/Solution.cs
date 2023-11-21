@@ -1,6 +1,6 @@
-﻿namespace AoC2023.Day1
+﻿namespace Solutions.Day1
 {
-    public class Solution
+    public static class Solution
     {
         public static int Day => 1;
 

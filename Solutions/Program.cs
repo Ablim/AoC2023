@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using AoC2023.Day1;
+using Solutions.Day1;
 
 var inputFile = $"Input{Solution.Day}.txt";
 
