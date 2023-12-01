@@ -15,8 +15,6 @@
 
         public static string SolvePart2(string[] rows)
         {
-            var lala = rows.Select(Transform);
-            
             return rows
                 .Select(Transform)
                 .Select(row => $"{FirstNum(row)}{LastNum(row)}")
@@ -27,16 +25,11 @@
 
         private static int FirstNum(string row)
         {
-            var letters = row.ToCharArray();
-            foreach (var letter in letters)
-            {
-                if (int.TryParse(letter.ToString(), out var number))
-                {
-                    return number;
-                }
-            }
-
-            return 0;
+            var first = row
+                .ToCharArray()
+                .FirstOrDefault(c => int.TryParse(c.ToString(), out _))
+                .ToString(); 
+            return int.Parse(first);
         }
 
         private static int LastNum(string row) =>
@@ -44,32 +37,32 @@
 
         private static string Transform(string row)
         {
-            var oldRow = row.ToCharArray();
-            var toReplace = new Dictionary<int, char>();
+            var newRow = row.ToCharArray();
+            var replacements = new Dictionary<int, char>();
 
             foreach (var number in Numbers)
             {
                 var temp = row;
 
-                while (temp.Length > 0)
+                while (true)
                 {
                     var index = temp.IndexOf(number, StringComparison.OrdinalIgnoreCase);
                     if (index == -1)
                         break;
                     
-                    toReplace.Add(index, Map(number));
+                    replacements.Add(index, Map(number));
                     var temp2 = temp.ToCharArray();
                     temp2[index] = ' ';
                     temp = new string(temp2);
                 }
             }
 
-            foreach (var replacement in toReplace)
+            foreach (var replacement in replacements)
             {
-                oldRow[replacement.Key] = replacement.Value;
+                newRow[replacement.Key] = replacement.Value;
             }
             
-            return new string(oldRow);
+            return new string(newRow);
         }
 
         private static string[] Numbers => new[]
