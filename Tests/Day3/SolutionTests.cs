@@ -12,6 +12,6 @@ public class SolutionTests
     public void Part1(string expected) => Assert.Equal(expected, Solution.SolvePart1(_input));
     
     [Theory]
-    [InlineData("2286")]
+    [InlineData("467835")]
     public void Part2(string expected) => Assert.Equal(expected, Solution.SolvePart2(_input));
 }

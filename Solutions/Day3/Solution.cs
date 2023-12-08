@@ -117,9 +117,58 @@
             return result.Values.ToArray();
         }
         
+        private static int GetGearRatio(int row, int col)
+        {
+            var result = new Dictionary<Position, int>();
+            
+            for (var i = row - 1; i <= row + 1; i++)
+            {
+                for (var j = col - 1; j <= col + 1; j++)
+                {
+                    if (i >= 0 && i < _map.Length && j >= 0 && j < _map[0].Length)
+                    {
+                        if (Lookup.ContainsKey((i, j)))
+                        {
+                            var number = Lookup[(i, j)];
+                            var position = ReverseLookup[number].Single(p => p.Indices.Contains((i, j)));
+
+                            result.TryAdd(position, number);
+                        }
+                    }
+                }
+            }
+
+            return result.Count == 2 ? result.Values.Aggregate((x, y) => x * y) : 0;
+        }
+        
         public static string SolvePart2(string[] rows)
         {
-            return "";
+            if (!_map.Any())
+                _map = rows
+                    .Select(row => row.ToCharArray())
+                    .ToArray();
+            
+            if (!Lookup.Any())
+                Parse();
+            
+            var ratios = new List<int>();
+            
+            for (var row = 0; row < _map.Length; row++)
+            {
+                for (var col = 0; col < _map[0].Length; col++)
+                {
+                    var character = _map[row][col];
+
+                    if (character == '*')
+                    {
+                        ratios.Add(GetGearRatio(row, col));
+                    }
+                }
+            }
+
+            return ratios
+                .Sum()
+                .ToString();
         }
     }
 }
