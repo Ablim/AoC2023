@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Net;
-using Solutions.Day8;
+using Solutions.Day9;
 
 var inputFile = $"Input{Solution.Day}.txt";
 
