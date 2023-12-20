@@ -16,37 +16,32 @@
 
         private static int CountArrangements((string springs, int[] broken) row)
         {
-            var all = BuildCandidates(row);
-            var filtered = all
-                .Where(a => a.Matches(row.springs))
-                .Distinct()
-                .ToArray();
-            return filtered.Length;
+            return BuildCandidates(row).Length;
         }
         
         private static string[] BuildCandidates((string springs, int[] broken) row)
         {
             var master = row.springs.ToCharArray();
-            var candidates = new List<char[]>();
+            var candidates = new List<(char[] arrangement, int index)>();
             
             var seed = new char[master.Length];
             Array.Copy(master, seed, master.Length);
-            candidates.Add(seed);
+            candidates.Add((seed, - 1));
 
             foreach (var b in row.broken)
             {
-                var moreCandidates = new List<char[]>();
+                var moreCandidates = new List<(char[] arrangement, int index)>();
                 
                 foreach (var c in candidates)
                 {
-                    for (var i = 0; i < c.Length; i++)
+                    for (var i = c.index + 1; i < c.arrangement.Length; i++)
                     {
-                        if (c.HasRoomAt(i, b))
+                        if (c.arrangement.HasRoomAt(i, b))
                         {
-                            var candidate = new char[c.Length];
-                            Array.Copy(c, candidate, c.Length);
+                            var candidate = new char[c.arrangement.Length];
+                            Array.Copy(c.arrangement, candidate, c.arrangement.Length);
                             candidate.InsertAt(i, b);
-                            moreCandidates.Add(candidate);
+                            moreCandidates.Add((candidate, i));
                         }
                     }
                 }
@@ -54,7 +49,7 @@
                 candidates = moreCandidates;
             }
             
-            return candidates.Select(c => new string(c)).ToArray();
+            return candidates.Select(c => new string(c.arrangement)).ToArray();
         }
 
         private static bool Matches(this string row, string template)
