@@ -16,7 +16,7 @@
 
         private static int CountArrangements((string springs, int[] broken) row)
         {
-            return BuildCandidates(row).Length;
+            return BuildCandidates(row).Distinct().Count(r => Matches(r, row.broken));
         }
         
         private static string[] BuildCandidates((string springs, int[] broken) row)
@@ -49,27 +49,15 @@
                 candidates = moreCandidates;
             }
             
-            return candidates.Select(c => new string(c.arrangement)).ToArray();
+            return candidates
+                .Select(c => new string(c.arrangement).Replace('?', '.'))
+                .ToArray();
         }
 
-        private static bool Matches(this string row, string template)
+        private static bool Matches(this string row, int[] sequence)
         {
-            if (row.Length != template.Length)
-                return false;
-
-            var rowAsArray = row.ToCharArray();
-            var templateAsArray = template.ToCharArray();
-
-            for (var i = 0; i < rowAsArray.Length; i++)
-            {
-                if (rowAsArray[i] == '?')
-                    return false;
-                
-                if (!(rowAsArray[i] == templateAsArray[i] || templateAsArray[i] == '?'))
-                    return false;
-            }
-            
-            return true;
+            var parts = row.Split('.', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length == sequence.Length;
         }
 
         private static bool HasRoomAt(this char[] source, int index, int length)
