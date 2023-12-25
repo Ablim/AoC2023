@@ -3,19 +3,11 @@
     public static class Solution
     {
         public static int Day => 21;
-        private static int _steps = 64;
-
-        public static string TestSolvePart1(string[] rows)
-        {
-            _steps = 6;
-            return SolvePart1(rows);
-        }
         
-        public static string SolvePart1(string[] rows)
+        public static string SolvePart1(string[] rows, int steps = 64)
         {
             var map = ParseMap(rows);
-            
-            return map.Walk(_steps).ToString();
+            return map.Walk(steps).ToString();
         }
 
         private static char[][] ParseMap(string[] rows)
@@ -26,6 +18,16 @@
         private static int Walk(this char[][] map, int steps)
         {
             // Memoize
+            var lookup = new HashSet<string>();
+            var visited = new HashSet<(int row, int col)>();
+            DistinctVisits(lookup, map, map.FindStart(), steps, visited);
+            return visited.Count;
+        }
+        
+        private static int Walk2(this char[][] map, int steps)
+        {
+            // Memoize
+            // Recursion => Stack overflow
             var lookup = new HashSet<string>();
             var visited = new HashSet<(int row, int col)>();
             DistinctVisits(lookup, map, map.FindStart(), steps, visited);
@@ -88,9 +90,11 @@
             position.col - 1 >= 0
             && map[position.row][position.col - 1] != '#';
         
-        public static string SolvePart2(string[] rows)
+        public static string SolvePart2(string[] rows, int steps = 26501365)
         {
             return "";
+            var map = ParseMap(rows);
+            return map.Walk2(steps).ToString();
         }
     }
 }

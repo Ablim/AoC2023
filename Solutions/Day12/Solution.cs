@@ -6,7 +6,6 @@
 
         public static string SolvePart1(string[] rows)
         {
-            return "";
             return rows
                 .Select(row => row.Split(' '))
                 .Select(row => (springs: row[0], broken: row[1].Split(',').Select(int.Parse).ToArray()))
