@@ -26,41 +26,36 @@
         private static int Walk(this char[][] map, int steps)
         {
             // Memoize
-            var lookup = new Dictionary<string, int>();
+            var lookup = new HashSet<string>();
             var visited = new HashSet<(int row, int col)>();
             DistinctVisits(lookup, map, map.FindStart(), steps, visited);
             return visited.Count;
         }
 
-        private static int DistinctVisits(Dictionary<string, int> lookup, char[][] map, (int row, int col) position, 
+        private static void DistinctVisits(HashSet<string> lookup, char[][] map, (int row, int col) position, 
             int steps, HashSet<(int row, int col)> visited)
         {
             if (steps == 0)
             {
-                return visited.Add(position) ? 1 : 0;
+                visited.Add(position);
+                return;
             }
 
             var key = $"{position.row}_{position.col}_{steps}";
 
-            if (lookup.TryGetValue(key, out var value))
-                return value;
+            if (lookup.Contains(key))
+                return;
 
-            var up = map.CanGoUp(position)
-                ? DistinctVisits(lookup, map, (position.row - 1, position.col), steps - 1, visited)
-                : 0;
-            var right = map.CanGoRight(position)
-                ? DistinctVisits(lookup, map, (position.row, position.col + 1), steps - 1, visited)
-                : 0;
-            var down = map.CanGoDown(position)
-                ? DistinctVisits(lookup, map, (position.row + 1, position.col), steps - 1, visited)
-                : 0;
-            var left = map.CanGoLeft(position)
-                ? DistinctVisits(lookup, map, (position.row, position.col - 1), steps - 1, visited)
-                : 0;
+            if (map.CanGoUp(position))
+                DistinctVisits(lookup, map, (position.row - 1, position.col), steps - 1, visited);
+            if (map.CanGoRight(position))
+                DistinctVisits(lookup, map, (position.row, position.col + 1), steps - 1, visited);
+            if (map.CanGoDown(position))
+                DistinctVisits(lookup, map, (position.row + 1, position.col), steps - 1, visited);
+            if (map.CanGoLeft(position))
+                DistinctVisits(lookup, map, (position.row, position.col - 1), steps - 1, visited);
 
-            var visits = up + right + down + left;
-            lookup[key] = visits;
-            return visits;
+            lookup.Add(key);
         }
 
         private static (int row, int col) FindStart(this char[][] map)
