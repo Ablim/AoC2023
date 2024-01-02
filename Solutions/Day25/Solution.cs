@@ -79,8 +79,9 @@
                         edges.Add(new Edge(nodeA, nodeB));
                 }
             }
-
-            var combinations = EdgeCombinations(edges.ToList(), new List<Edge>(), new List<List<Edge>>());
+            
+            // TODO How to reduce the set of possible edges?
+            var combinations = EdgeCombinations(edges.ToList());
 
             foreach (var combo in combinations)
             {
@@ -128,27 +129,36 @@
             return (visited.Count, nodes - visited.Count);
         }
 
-        private static List<List<Edge>> EdgeCombinations(List<Edge> remaining, List<Edge> selected, List<List<Edge>> result)
+        private static List<List<Edge>> EdgeCombinations(List<Edge> edges)
         {
-            if (selected.Count == 3)
+            var result = new List<List<Edge>>
             {
-                result.Add(selected);
-                return result;
+                new()
+            };
+
+            foreach (var edge in edges)
+            {
+                var tempResult = new List<List<Edge>>();
+                
+                foreach (var list in result)
+                {
+                    if (list.Count == 3)
+                    {
+                        tempResult.Add(list);
+                        continue;
+                    }
+                    
+                    var with = new List<Edge>(list) { edge };
+                    var without = new List<Edge>(list);
+                    
+                    tempResult.Add(with);
+                    tempResult.Add(without);
+                }
+
+                result = tempResult;
             }
             
-            if (!remaining.Any())
-                return result;
-
-            var edge = remaining.First();
-            remaining.Remove(edge);
-
-            EdgeCombinations(new List<Edge>(remaining), new List<Edge>(selected), result);
-            EdgeCombinations(new List<Edge>(remaining), new List<Edge>(selected)
-            {
-                edge
-            }, result);
-
-            return result;
+            return result.Where(list => list.Count == 3).ToList();
         }
         
         public static string SolvePart2(string[] rows)
